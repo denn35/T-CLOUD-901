@@ -1,0 +1,5 @@
+[app_server]
+Linux-app.eastus.cloudapp.azure.com ansible_user=var.username_app ansible_private_key_file=~/.ssh/id_rsa
+
+[sql_server]
+Linux-sql.eastus.cloudapp.azure.com ansible_user=var.username_sql ansible_private_key_file=~/.ssh/id_rsa

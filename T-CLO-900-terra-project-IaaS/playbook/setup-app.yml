@@ -1,0 +1,61 @@
+
+---
+- name: Déployer l'application Laravel
+  hosts: app_server
+  become: true
+
+  tasks:
+    - name: Mettre à jour les paquets
+      apt:
+        update_cache: yes
+
+    - name: Installer les dépendances Laravel
+      apt:
+        name:
+          - php
+          - php-cli
+          - php-mbstring
+          - php-xml
+          - php-curl
+          - php-zip
+          - nginx
+          - composer
+          - git
+        state: present
+
+    - name: Ajouter la clé SSH pour GitHub
+      copy:
+        src: ssh-keys/id_rsa
+        dest: /root/.ssh/id_rsa
+        mode: '0600'
+
+    - name: Ajouter GitHub comme hôte connu
+      shell: |
+        ssh-keyscan -H github.com >> /root/.ssh/known_hosts
+      args:
+        creates: /root/.ssh/known_hosts
+
+    - name: Cloner le dépôt Laravel depuis GitHub
+      git:
+        repo: "git@github.com:username/repository.git"
+        dest: /var/www/html/laravel
+        version: main
+        update: yes
+
+    - name: Installer les dépendances PHP avec Composer
+      composer:
+        command: install
+        working_dir: /var/www/html/laravel
+
+    - name: Configurer les permissions pour Laravel
+      file:
+        path: /var/www/html/laravel
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Redémarrer Nginx
+      service:
+        name: nginx
+        state: restarted

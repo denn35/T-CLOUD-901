@@ -17,6 +17,8 @@ T-CLO-900-terra-project-PaaS/.terraform/
 T-CLO-900-terra-project-PaaS/variables.tf
 T-CLO-900-terra-project-IaaS/variables.tf
 
+T-CLO-900-terra-project-IaaS/ssh/*
+
 # Règles provenant de sample-app
 /node_modules
 /public/hot

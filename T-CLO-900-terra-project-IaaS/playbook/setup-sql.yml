@@ -1,0 +1,35 @@
+
+---
+- name: Configuration de la VM SQL
+  hosts: sql_server
+  become: true
+
+  tasks:
+    - name: Installer MySQL
+      apt:
+        name: mysql-server
+        state: present
+
+    - name: Configurer MySQL pour l'accès distant
+      lineinfile:
+        path: /etc/mysql/mysql.conf.d/mysqld.cnf
+        regexp: '^bind-address'
+        line: 'bind-address = 0.0.0.0'
+
+    - name: Redémarrer MySQL
+      service:
+        name: mysql
+        state: restarted
+
+    - name: Créer une base de données Laravel
+      mysql_db:
+        name: laravel
+        state: present
+
+    - name: Créer un utilisateur Laravel
+      mysql_user:
+        name: laravel
+        password: laravel_password
+        priv: "laravel.*:ALL"
+        host: "%"
+        state: present

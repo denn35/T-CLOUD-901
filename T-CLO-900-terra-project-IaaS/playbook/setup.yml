@@ -1,0 +1,30 @@
+
+---
+- name: Configuration générale des VMs
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Mettre à jour les paquets
+      apt:
+        update_cache: yes
+
+    - name: Installer les dépendances nécessaires
+      apt:
+        name:
+          - curl
+          - unzip
+          - python3-pip
+        state: present
+
+    - name: Copier la clé SSH sur la VM
+      copy:
+        src: ssh-keys/id_rsa
+        dest: /root/.ssh/id_rsa
+        mode: '0600'
+
+    - name: Ajouter GitHub comme hôte connu
+      shell: |
+        ssh-keyscan -H github.com >> /root/.ssh/known_hosts
+      args:
+        creates: /root/.ssh/known_hosts

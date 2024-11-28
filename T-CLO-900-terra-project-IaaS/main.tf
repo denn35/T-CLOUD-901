@@ -27,6 +27,29 @@ resource "azurerm_dev_test_linux_virtual_machine" "vmapp" {
     sku       = "22_04-lts"
     version   = "latest"
   }
+   # Provisioner to upload the SSH key
+  provisioner "file" {
+    source      = "ssh-keys/id_rsa"
+    destination = "/root/.ssh/id_rsa"
+
+    connection {
+      type        = "ssh"
+      user        = var.username-app
+      private_key = file("./ssh/id_rsa")
+      host        = self.fqdn
+    }
+  }
+
+  # Provisioner to run Ansible playbook
+  provisioner "local-exec" {
+    command = <<EOT
+      ansible-playbook -i '${self.fqdn},' \
+        -u ${var.username-app} \
+        --private-key ~/.ssh/id_rsa \
+        playbooks/setup-app.yml
+    EOT
+  }
+
 }
 
   resource "azurerm_dev_test_linux_virtual_machine" "vmsql" {
@@ -46,6 +69,26 @@ resource "azurerm_dev_test_linux_virtual_machine" "vmapp" {
     offer     = "0001-com-ubuntu-server-jammy"
     sku       = "22_04-lts"
     version   = "latest"
+  }
+   provisioner "file" {
+    source      = "ssh-keys/id_rsa"
+    destination = "/root/.ssh/id_rsa"
+
+    connection {
+      type        = "ssh"
+      user        = var.username-sql
+      private_key = file("./ssh/id_rsa")
+      host        = self.fqdn
+    }
+  }
+
+  provisioner "local-exec" {
+    command = <<EOT
+      ansible-playbook -i '${self.fqdn},' \
+        -u ${var.username-sql} \
+        --private-key ~/.ssh/id_rsa \
+        playbooks/setup-sql.yml
+    EOT
   }
 
 }
