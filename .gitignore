@@ -1,0 +1,16 @@
+# Exclure les fichiers initiaux de Terraform
+.terraform/
+.terraform.lock.hcl
+
+# Exclure les fichiers de plan Terraform
+*.tfstate
+*.tfstate.backup
+planfile
+plan*  # Si vos fichiers plan ont un préfixe "plan"
+
+# Exclure les fichiers spécifiques dans les sous-dossiers
+T-CLO-900-terra-project-IaaS/.terraform/
+T-CLO-900-terra-projet-PaaS/.terraform/
+
+# Optionnel : ignorer tous les fichiers de configuration sensibles
+.env

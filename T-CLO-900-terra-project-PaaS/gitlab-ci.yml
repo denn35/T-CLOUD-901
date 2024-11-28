@@ -1,0 +1,15 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - docker build -t myapp-image .
+    - docker tag myapp-image registry.gitlab.com/myproject/myapp:latest
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker push registry.gitlab.com/myproject/myapp:latest
