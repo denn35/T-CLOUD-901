@@ -5,12 +5,13 @@
 # Exclure les fichiers de plan Terraform
 *.tfstate
 *.tfstate.backup
-planfile
-plan*  # Si vos fichiers plan ont un préfixe "plan"
-
+*planfile
+*plantf  # Si vos fichiers plan ont un préfixe "plan"
 # Exclure les fichiers spécifiques dans les sous-dossiers
 T-CLO-900-terra-project-IaaS/.terraform/
-T-CLO-900-terra-projet-PaaS/.terraform/
+T-CLO-900-terra-project-PaaS/.terraform/
 
 # Optionnel : ignorer tous les fichiers de configuration sensibles
 .env
+T-CLO-900-terra-project-PaaS/variables.tf
+T-CLO-900-terra-project-IaaS/variables.tf
