@@ -39,6 +39,9 @@ resource "azurerm_linux_web_app" "webapp" {
   https_only            = true
   site_config { 
     minimum_tls_version = "1.2"
+    application_stack {
+      php_version = "8.1" # Change to appropiate application and version
+    }
   }
 }
 
@@ -46,7 +49,13 @@ resource "azurerm_linux_web_app" "webapp" {
 resource "azurerm_app_service_source_control" "sourcecontrol" {
   app_id             = azurerm_linux_web_app.webapp.id
   repo_url           = var.source_control_repo_url
-  branch             = "master"
-  use_manual_integration = true
+  branch             = "main"
+  use_manual_integration = false
   use_mercurial      = false
+}
+
+resource "azurerm_source_control_token" "source_control_token" {
+  type         = "GitHub"
+  token        = var.github_auth_token
+  token_secret = var.github_auth_token
 }
