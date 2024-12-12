@@ -1,0 +1,24 @@
+# - name: Configure Slave 1 with Apache and PHP
+#   hosts: slave1
+#   vars_files:
+#     - inventories/group_vars/all.yml
+#   roles:
+#     - apache_php
+#     - deploy_laravel
+
+# - name: Configuration de base des serveurs
+#   hosts: slave2
+#   become: true
+#   roles:
+#     - ansible_config
+
+# - name: Configure Slave 2 with MySQL
+#   hosts: slave2
+#   roles:
+#     - mysql
+- name: Setup and deploy Laravel application
+  hosts: slave1
+  become: true
+  roles:
+    - install_docker
+    - deploy_w_docker

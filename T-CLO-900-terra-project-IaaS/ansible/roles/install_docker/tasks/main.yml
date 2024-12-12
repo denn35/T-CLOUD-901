@@ -1,0 +1,27 @@
+---
+# tasks file for install_docker
+- name: Update and upgrade apt packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Install required packages
+  apt:
+    name:
+      - git
+      - curl
+      - zip
+      - unzip
+      - docker.io
+      - docker-compose
+    state: present
+
+- name: Add current user to Docker group
+  command: usermod -aG docker "{{ ansible_user }}"
+  become: true  
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: true

@@ -1,0 +1,18 @@
+# variable laravel
+laravel_repo: "https://gitlab.infra.connectwork.fr/epitech/sample-app.git"
+laravel_path: "/var/www/html"
+laravel_env:
+  DB_CONNECTION: mysql
+  # sql : stwo
+  DB_HOST: 172.20.10.3
+  DB_PORT: 3306
+  DB_DATABASE: db_name
+  DB_USERNAME: username
+  DB_PASSWORD: passwd
+
+#variable sql
+mysql_root_password: "root_password"
+mysql_database: "db_name"
+mysql_user: "username"
+mysql_user_password: "passwd"
+

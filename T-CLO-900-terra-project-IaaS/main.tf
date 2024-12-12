@@ -15,8 +15,8 @@ resource "azurerm_dev_test_linux_virtual_machine" "vmapp" {
   resource_group_name    = data.azurerm_resource_group.t_clo.name
   location               = var.location
   size                   = "Standard_A4_v2"    
-  username               = var.username-app
-  password               = var.password-app   
+  username               = var.username_app
+  password               = var.password_app   
   lab_virtual_network_id = var.lab_virtual_network_id
   lab_subnet_name        = var.lab_subnet_name
   storage_type           = "Standard"      
@@ -27,6 +27,7 @@ resource "azurerm_dev_test_linux_virtual_machine" "vmapp" {
     sku       = "22_04-lts"
     version   = "latest"
   }
+  
 }
 
 

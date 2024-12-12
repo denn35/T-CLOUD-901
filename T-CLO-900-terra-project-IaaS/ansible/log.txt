@@ -1,0 +1,116 @@
+ansible-playbook [core 2.14.16]
+  config file = /media/sf_shared/ansible/ansible/ansible.cfg
+  configured module search path = ['/home/master/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3/dist-packages/ansible
+  ansible collection location = /home/master/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/bin/ansible-playbook
+  python version = 3.11.2 (main, Sep 14 2024, 03:00:30) [GCC 12.2.0] (/usr/bin/python3)
+  jinja version = 3.1.2
+  libyaml = True
+Using /media/sf_shared/ansible/ansible/ansible.cfg as config file
+Skipping callback 'default', as we already have a stdout callback.
+Skipping callback 'minimal', as we already have a stdout callback.
+Skipping callback 'oneline', as we already have a stdout callback.
+
+PLAYBOOK: playbook.yml *********************************************************
+1 plays in playbook.yml
+
+PLAY [Setup and deploy Laravel application] ************************************
+
+TASK [Gathering Facts] *********************************************************
+task path: /media/sf_shared/ansible/ansible/playbook.yml:19
+ok: [slave1]
+
+TASK [install_docker : Update and upgrade apt packages] ************************
+task path: /media/sf_shared/ansible/ansible/roles/install_docker/tasks/main.yml:3
+ok: [slave1] => {"changed": false, "msg": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nCalculating upgrade...\n0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.\n", "stderr": "", "stderr_lines": [], "stdout": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nCalculating upgrade...\n0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.\n", "stdout_lines": ["Reading package lists...", "Building dependency tree...", "Reading state information...", "Calculating upgrade...", "0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded."]}
+
+TASK [install_docker : Install required packages] ******************************
+task path: /media/sf_shared/ansible/ansible/roles/install_docker/tasks/main.yml:8
+ok: [slave1] => {"cache_update_time": 1734006418, "cache_updated": false, "changed": false}
+
+TASK [install_docker : Add current user to Docker group] ***********************
+task path: /media/sf_shared/ansible/ansible/roles/install_docker/tasks/main.yml:19
+changed: [slave1] => {"changed": true, "cmd": ["usermod", "-aG", "docker", "stwo"], "delta": "0:00:00.029283", "end": "2024-12-12 12:34:07.125911", "msg": "", "rc": 0, "start": "2024-12-12 12:34:07.096628", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+
+TASK [install_docker : Start Docker service] ***********************************
+task path: /media/sf_shared/ansible/ansible/roles/install_docker/tasks/main.yml:23
+ok: [slave1] => {"changed": false, "enabled": true, "name": "docker", "state": "started", "status": {"ActiveEnterTimestamp": "Thu 2024-12-12 12:30:37 GMT", "ActiveEnterTimestampMonotonic": "8097947", "ActiveExitTimestampMonotonic": "0", "ActiveState": "active", "After": "firewalld.service network-online.target docker.socket containerd.service system.slice systemd-journald.socket basic.target sysinit.target", "AllowIsolate": "no", "AssertResult": "yes", "AssertTimestamp": "Thu 2024-12-12 12:30:34 GMT", "AssertTimestampMonotonic": "5208714", "Before": "multi-user.target shutdown.target", "BlockIOAccounting": "no", "BlockIOWeight": "[not set]", "CPUAccounting": "yes", "CPUAffinityFromNUMA": "no", "CPUQuotaPerSecUSec": "infinity", "CPUQuotaPeriodUSec": "infinity", "CPUSchedulingPolicy": "0", "CPUSchedulingPriority": "0", "CPUSchedulingResetOnFork": "no", "CPUShares": "[not set]", "CPUUsageNSec": "1396441000", "CPUWeight": "[not set]", "CacheDirectoryMode": "0755", "CanFreeze": "yes", "CanIsolate": "no", "CanReload": "yes", "CanStart": "yes", "CanStop": "yes", "CapabilityBoundingSet": "cap_chown cap_dac_override cap_dac_read_search cap_fowner cap_fsetid cap_kill cap_setgid cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config cap_mknod cap_lease cap_audit_write cap_audit_control cap_setfcap cap_mac_override cap_mac_admin cap_syslog cap_wake_alarm cap_block_suspend cap_audit_read cap_perfmon cap_bpf cap_checkpoint_restore", "CleanResult": "success", "CollectMode": "inactive", "ConditionResult": "yes", "ConditionTimestamp": "Thu 2024-12-12 12:30:34 GMT", "ConditionTimestampMonotonic": "5208711", "ConfigurationDirectoryMode": "0755", "Conflicts": "shutdown.target", "ControlGroup": "/system.slice/docker.service", "ControlGroupId": "2549", "ControlPID": "0", "CoredumpFilter": "0x33", "DefaultDependencies": "yes", "DefaultMemoryLow": "0", "DefaultMemoryMin": "0", "Delegate": "yes", "DelegateControllers": "cpu cpuset io memory pids", "Description": "Docker Application Container Engine", "DevicePolicy": "auto", "Documentation": "https://docs.docker.com", "DynamicUser": "no", "EffectiveCPUs": "0", "EffectiveMemoryNodes": "0", "EnvironmentFiles": "/etc/default/docker (ignore_errors=yes)", "ExecMainCode": "0", "ExecMainExitTimestampMonotonic": "0", "ExecMainPID": "480", "ExecMainStartTimestamp": "Thu 2024-12-12 12:30:34 GMT", "ExecMainStartTimestampMonotonic": "5218120", "ExecMainStatus": "0", "ExecReload": "{ path=/bin/kill ; argv[]=/bin/kill -s HUP $MAINPID ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }", "ExecReloadEx": "{ path=/bin/kill ; argv[]=/bin/kill -s HUP $MAINPID ; flags= ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }", "ExecStart": "{ path=/usr/sbin/dockerd ; argv[]=/usr/sbin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock $DOCKER_OPTS ; ignore_errors=no ; start_time=[Thu 2024-12-12 12:30:34 GMT] ; stop_time=[n/a] ; pid=480 ; code=(null) ; status=0/0 }", "ExecStartEx": "{ path=/usr/sbin/dockerd ; argv[]=/usr/sbin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock $DOCKER_OPTS ; flags= ; start_time=[Thu 2024-12-12 12:30:34 GMT] ; stop_time=[n/a] ; pid=480 ; code=(null) ; status=0/0 }", "ExitType": "main", "FailureAction": "none", "FileDescriptorStoreMax": "0", "FinalKillSignal": "9", "FragmentPath": "/lib/systemd/system/docker.service", "FreezerState": "running", "GID": "[not set]", "GuessMainPID": "yes", "IOAccounting": "no", "IOReadBytes": "18446744073709551615", "IOReadOperations": "18446744073709551615", "IOSchedulingClass": "2", "IOSchedulingPriority": "4", "IOWeight": "[not set]", "IOWriteBytes": "18446744073709551615", "IOWriteOperations": "18446744073709551615", "IPAccounting": "no", "IPEgressBytes": "[no data]", "IPEgressPackets": "[no data]", "IPIngressBytes": "[no data]", "IPIngressPackets": "[no data]", "Id": "docker.service", "IgnoreOnIsolate": "no", "IgnoreSIGPIPE": "yes", "InactiveEnterTimestampMonotonic": "0", "InactiveExitTimestamp": "Thu 2024-12-12 12:30:34 GMT", "InactiveExitTimestampMonotonic": "5218324", "InvocationID": "6c38894b80bb40c681e5f69ba9421469", "JobRunningTimeoutUSec": "infinity", "JobTimeoutAction": "none", "JobTimeoutUSec": "infinity", "KeyringMode": "private", "KillMode": "process", "KillSignal": "15", "LimitAS": "infinity", "LimitASSoft": "infinity", "LimitCORE": "infinity", "LimitCORESoft": "infinity", "LimitCPU": "infinity", "LimitCPUSoft": "infinity", "LimitDATA": "infinity", "LimitDATASoft": "infinity", "LimitFSIZE": "infinity", "LimitFSIZESoft": "infinity", "LimitLOCKS": "infinity", "LimitLOCKSSoft": "infinity", "LimitMEMLOCK": "8388608", "LimitMEMLOCKSoft": "8388608", "LimitMSGQUEUE": "819200", "LimitMSGQUEUESoft": "819200", "LimitNICE": "0", "LimitNICESoft": "0", "LimitNOFILE": "1048576", "LimitNOFILESoft": "1048576", "LimitNPROC": "infinity", "LimitNPROCSoft": "infinity", "LimitRSS": "infinity", "LimitRSSSoft": "infinity", "LimitRTPRIO": "0", "LimitRTPRIOSoft": "0", "LimitRTTIME": "infinity", "LimitRTTIMESoft": "infinity", "LimitSIGPENDING": "7689", "LimitSIGPENDINGSoft": "7689", "LimitSTACK": "infinity", "LimitSTACKSoft": "8388608", "LoadState": "loaded", "LockPersonality": "no", "LogLevelMax": "-1", "LogRateLimitBurst": "0", "LogRateLimitIntervalUSec": "0", "LogsDirectoryMode": "0755", "MainPID": "480", "ManagedOOMMemoryPressure": "auto", "ManagedOOMMemoryPressureLimit": "0", "ManagedOOMPreference": "none", "ManagedOOMSwap": "auto", "MemoryAccounting": "yes", "MemoryAvailable": "infinity", "MemoryCurrent": "112812032", "MemoryDenyWriteExecute": "no", "MemoryHigh": "infinity", "MemoryLimit": "infinity", "MemoryLow": "0", "MemoryMax": "infinity", "MemoryMin": "0", "MemorySwapMax": "infinity", "MountAPIVFS": "no", "NFileDescriptorStore": "0", "NRestarts": "0", "NUMAPolicy": "n/a", "Names": "docker.service", "NeedDaemonReload": "no", "Nice": "0", "NoNewPrivileges": "no", "NonBlocking": "no", "NotifyAccess": "main", "OOMPolicy": "continue", "OOMScoreAdjust": "0", "OnFailureJobMode": "replace", "OnSuccessJobMode": "fail", "Perpetual": "no", "PrivateDevices": "no", "PrivateIPC": "no", "PrivateMounts": "no", "PrivateNetwork": "no", "PrivateTmp": "no", "PrivateUsers": "no", "ProcSubset": "all", "ProtectClock": "no", "ProtectControlGroups": "no", "ProtectHome": "no", "ProtectHostname": "no", "ProtectKernelLogs": "no", "ProtectKernelModules": "no", "ProtectKernelTunables": "no", "ProtectProc": "default", "ProtectSystem": "no", "RefuseManualStart": "no", "RefuseManualStop": "no", "ReloadResult": "success", "RemainAfterExit": "no", "RemoveIPC": "no", "Requires": "docker.socket sysinit.target system.slice", "Restart": "on-failure", "RestartKillSignal": "15", "RestartUSec": "100ms", "RestrictNamespaces": "no", "RestrictRealtime": "no", "RestrictSUIDSGID": "no", "Result": "success", "RootDirectoryStartOnly": "no", "RuntimeDirectoryMode": "0755", "RuntimeDirectoryPreserve": "no", "RuntimeMaxUSec": "infinity", "RuntimeRandomizedExtraUSec": "0", "SameProcessGroup": "no", "SecureBits": "0", "SendSIGHUP": "no", "SendSIGKILL": "yes", "Slice": "system.slice", "StandardError": "inherit", "StandardInput": "null", "StandardOutput": "journal", "StartLimitAction": "none", "StartLimitBurst": "3", "StartLimitIntervalUSec": "1min", "StartupBlockIOWeight": "[not set]", "StartupCPUShares": "[not set]", "StartupCPUWeight": "[not set]", "StartupIOWeight": "[not set]", "StateChangeTimestamp": "Thu 2024-12-12 12:30:37 GMT", "StateChangeTimestampMonotonic": "8097947", "StateDirectoryMode": "0755", "StatusErrno": "0", "StopWhenUnneeded": "no", "SubState": "running", "SuccessAction": "none", "SyslogFacility": "3", "SyslogLevel": "6", "SyslogLevelPrefix": "yes", "SyslogPriority": "30", "SystemCallErrorNumber": "2147483646", "TTYReset": "no", "TTYVHangup": "no", "TTYVTDisallocate": "no", "TasksAccounting": "yes", "TasksCurrent": "9", "TasksMax": "infinity", "TimeoutAbortUSec": "1min 30s", "TimeoutCleanUSec": "infinity", "TimeoutStartFailureMode": "terminate", "TimeoutStartUSec": "infinity", "TimeoutStopFailureMode": "terminate", "TimeoutStopUSec": "1min 30s", "TimerSlackNSec": "50000", "Transient": "no", "TriggeredBy": "docker.socket", "Type": "notify", "UID": "[not set]", "UMask": "0022", "UnitFilePreset": "enabled", "UnitFileState": "enabled", "UtmpMode": "init", "WantedBy": "multi-user.target", "Wants": "network-online.target containerd.service", "WatchdogSignal": "6", "WatchdogTimestampMonotonic": "0", "WatchdogUSec": "0"}}
+
+TASK [deploy_w_docker : Supprimer complètement le répertoire existant] *********
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:3
+changed: [slave1] => {"changed": true, "path": "/var/www/sample-app", "state": "absent"}
+
+TASK [deploy_w_docker : Recreate /var/www/sample-app directory] ****************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:9
+changed: [slave1] => {"changed": true, "gid": 33, "group": "www-data", "mode": "0755", "owner": "www-data", "path": "/var/www/sample-app", "size": 4096, "state": "directory", "uid": 33}
+
+TASK [deploy_w_docker : Mark /var/www/sample-app as a safe Git repository] *****
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:18
+changed: [slave1] => {"changed": true, "cmd": ["git", "config", "--global", "--add", "safe.directory", "/var/www/sample-app"], "delta": "0:00:00.037908", "end": "2024-12-12 12:34:09.583409", "msg": "", "rc": 0, "start": "2024-12-12 12:34:09.545501", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+
+TASK [deploy_w_docker : Cloner le dépôt Laravel] *******************************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:22
+changed: [slave1] => {"after": "3526e51e0bdaae811a5528132f5dcd4b9420a337", "before": null, "changed": true}
+
+TASK [deploy_w_docker : Ensure proper ownership for sample-app] ****************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:30
+changed: [slave1] => {"changed": true, "gid": 33, "group": "www-data", "mode": "0755", "owner": "www-data", "path": "/var/www/sample-app", "size": 4096, "state": "directory", "uid": 33}
+
+TASK [deploy_w_docker : Ensure storage and cache directories are writable] *****
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:37
+changed: [slave1] => (item=/var/www/sample-app/storage) => {"ansible_loop_var": "item", "changed": true, "gid": 33, "group": "www-data", "item": "/var/www/sample-app/storage", "mode": "0775", "owner": "www-data", "path": "/var/www/sample-app/storage", "size": 4096, "state": "directory", "uid": 33}
+changed: [slave1] => (item=/var/www/sample-app/bootstrap/cache) => {"ansible_loop_var": "item", "changed": true, "gid": 33, "group": "www-data", "item": "/var/www/sample-app/bootstrap/cache", "mode": "0775", "owner": "www-data", "path": "/var/www/sample-app/bootstrap/cache", "size": 4096, "state": "directory", "uid": 33}
+
+TASK [deploy_w_docker : Check for running Docker containers] *******************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:47
+ok: [slave1] => {"changed": false, "cmd": "docker ps -q", "delta": "0:00:00.361832", "end": "2024-12-12 12:34:16.296977", "msg": "", "rc": 0, "start": "2024-12-12 12:34:15.935145", "stderr": "", "stderr_lines": [], "stdout": "cbdbceea6888", "stdout_lines": ["cbdbceea6888"]}
+
+TASK [deploy_w_docker : Stop all running Docker containers] ********************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:52
+changed: [slave1] => {"changed": true, "cmd": "docker stop $(docker ps -q)", "delta": "0:00:01.859007", "end": "2024-12-12 12:34:18.558253", "msg": "", "rc": 0, "start": "2024-12-12 12:34:16.699246", "stderr": "", "stderr_lines": [], "stdout": "cbdbceea6888", "stdout_lines": ["cbdbceea6888"]}
+
+TASK [deploy_w_docker : Check for all Docker containers] ***********************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:57
+ok: [slave1] => {"changed": false, "cmd": "docker ps -aq", "delta": "0:00:00.027555", "end": "2024-12-12 12:34:19.080972", "msg": "", "rc": 0, "start": "2024-12-12 12:34:19.053417", "stderr": "", "stderr_lines": [], "stdout": "c02b9746e874\ncbdbceea6888\naf1bf2800126", "stdout_lines": ["c02b9746e874", "cbdbceea6888", "af1bf2800126"]}
+
+TASK [deploy_w_docker : Remove all Docker containers] **************************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:62
+changed: [slave1] => {"changed": true, "cmd": "docker rm $(docker ps -aq)", "delta": "0:00:00.089258", "end": "2024-12-12 12:34:19.654235", "msg": "", "rc": 0, "start": "2024-12-12 12:34:19.564977", "stderr": "", "stderr_lines": [], "stdout": "c02b9746e874\ncbdbceea6888\naf1bf2800126", "stdout_lines": ["c02b9746e874", "cbdbceea6888", "af1bf2800126"]}
+
+TASK [deploy_w_docker : Run Docker Compose for sample-app] *********************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:67
+changed: [slave1] => {"changed": true, "cmd": ["docker-compose", "up", "-d"], "delta": "0:00:03.698640", "end": "2024-12-12 12:34:23.825717", "msg": "", "rc": 0, "start": "2024-12-12 12:34:20.127077", "stderr": "Creating sample-app_traefik_1 ... \r\nCreating sample-app_db_1      ... \r\nCreating sample-app_db_1      ... done\r\nCreating sample-app_app_1     ... \r\nCreating sample-app_traefik_1 ... done\r\nCreating sample-app_app_1     ... done", "stderr_lines": ["Creating sample-app_traefik_1 ... ", "Creating sample-app_db_1      ... ", "Creating sample-app_db_1      ... done", "Creating sample-app_app_1     ... ", "Creating sample-app_traefik_1 ... done", "Creating sample-app_app_1     ... done"], "stdout": "", "stdout_lines": []}
+
+TASK [deploy_w_docker : Vérifier si des migrations existent] *******************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:73
+fatal: [slave1]: FAILED! => {"changed": true, "cmd": ["docker", "exec", "sample-app_app_1", "php", "artisan", "migrate:status"], "delta": "0:00:01.709222", "end": "2024-12-12 12:34:26.376431", "msg": "non-zero return code", "rc": 1, "start": "2024-12-12 12:34:24.667209", "stderr": "", "stderr_lines": [], "stdout": "Migration table not found.", "stdout_lines": ["Migration table not found."]}
+...ignoring
+
+TASK [deploy_w_docker : Créer une migration si nécessaire] *********************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:80
+changed: [slave1] => {"changed": true, "cmd": ["docker", "exec", "sample-app_app_1", "php", "artisan", "make:migration", "init_migration"], "delta": "0:00:08.142170", "end": "2024-12-12 12:34:35.260460", "msg": "", "rc": 0, "start": "2024-12-12 12:34:27.118290", "stderr": "", "stderr_lines": [], "stdout": "Created Migration: 2024_12_12_123427_init_migration", "stdout_lines": ["Created Migration: 2024_12_12_123427_init_migration"]}
+
+TASK [deploy_w_docker : Exécuter les migrations Laravel] ***********************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:86
+changed: [slave1] => {"changed": true, "cmd": ["docker", "exec", "sample-app_app_1", "php", "artisan", "migrate", "--force"], "delta": "0:00:00.464146", "end": "2024-12-12 12:34:36.152893", "msg": "", "rc": 0, "start": "2024-12-12 12:34:35.688747", "stderr": "", "stderr_lines": [], "stdout": "Migration table created successfully.\nMigrating: 2014_10_12_000000_create_users_table\nMigrated:  2014_10_12_000000_create_users_table (34.45ms)\nMigrating: 2014_10_12_100000_create_password_resets_table\nMigrated:  2014_10_12_100000_create_password_resets_table (42.01ms)\nMigrating: 2019_08_19_000000_create_failed_jobs_table\nMigrated:  2019_08_19_000000_create_failed_jobs_table (40.20ms)\nMigrating: 2019_12_14_000001_create_personal_access_tokens_table\nMigrated:  2019_12_14_000001_create_personal_access_tokens_table (63.15ms)\nMigrating: 2023_08_21_130800_create_counters_table\nMigrated:  2023_08_21_130800_create_counters_table (20.40ms)\nMigrating: 2024_12_12_123427_init_migration\nMigrated:  2024_12_12_123427_init_migration (0.05ms)", "stdout_lines": ["Migration table created successfully.", "Migrating: 2014_10_12_000000_create_users_table", "Migrated:  2014_10_12_000000_create_users_table (34.45ms)", "Migrating: 2014_10_12_100000_create_password_resets_table", "Migrated:  2014_10_12_100000_create_password_resets_table (42.01ms)", "Migrating: 2019_08_19_000000_create_failed_jobs_table", "Migrated:  2019_08_19_000000_create_failed_jobs_table (40.20ms)", "Migrating: 2019_12_14_000001_create_personal_access_tokens_table", "Migrated:  2019_12_14_000001_create_personal_access_tokens_table (63.15ms)", "Migrating: 2023_08_21_130800_create_counters_table", "Migrated:  2023_08_21_130800_create_counters_table (20.40ms)", "Migrating: 2024_12_12_123427_init_migration", "Migrated:  2024_12_12_123427_init_migration (0.05ms)"]}
+
+TASK [deploy_w_docker : Afficher le résultat des migrations] *******************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:92
+ok: [slave1] => {
+    "migration_output.stdout": "Migration table created successfully.\nMigrating: 2014_10_12_000000_create_users_table\nMigrated:  2014_10_12_000000_create_users_table (34.45ms)\nMigrating: 2014_10_12_100000_create_password_resets_table\nMigrated:  2014_10_12_100000_create_password_resets_table (42.01ms)\nMigrating: 2019_08_19_000000_create_failed_jobs_table\nMigrated:  2019_08_19_000000_create_failed_jobs_table (40.20ms)\nMigrating: 2019_12_14_000001_create_personal_access_tokens_table\nMigrated:  2019_12_14_000001_create_personal_access_tokens_table (63.15ms)\nMigrating: 2023_08_21_130800_create_counters_table\nMigrated:  2023_08_21_130800_create_counters_table (20.40ms)\nMigrating: 2024_12_12_123427_init_migration\nMigrated:  2024_12_12_123427_init_migration (0.05ms)"
+}
+
+TASK [deploy_w_docker : Remplir la base de données avec des données de seeders] ***
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:97
+changed: [slave1] => {"changed": true, "cmd": ["docker", "exec", "sample-app_app_1", "php", "artisan", "db:seed", "--force"], "delta": "0:00:00.203580", "end": "2024-12-12 12:34:36.826956", "msg": "", "rc": 0, "start": "2024-12-12 12:34:36.623376", "stderr": "", "stderr_lines": [], "stdout": "Database seeding completed successfully.", "stdout_lines": ["Database seeding completed successfully."]}
+
+TASK [deploy_w_docker : Afficher le résultat du seeding] ***********************
+task path: /media/sf_shared/ansible/ansible/roles/deploy_w_docker/tasks/main.yml:103
+ok: [slave1] => {
+    "seed_output.stdout": "Database seeding completed successfully."
+}
+
+PLAY RECAP *********************************************************************
+slave1                     : ok=22   changed=14   unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   
+
