@@ -72,40 +72,94 @@ resource "null_resource" "setup_ansible" {
   depends_on = [azurerm_dev_test_linux_virtual_machine.vmapp]
 
 }
+# Step to upload the ansible directory to the remote machine
+resource "null_resource" "upload_ansible" {
+  provisioner "file" {
+    source      = "./ansible"  # Local path to the ansible directory
+    destination = "/home/${var.username_app}/ansible"  # Destination path on the remote VM
 
-# Generate Ansible inventory
-resource "null_resource" "generate_inventory" {
-  provisioner "local-exec" {
-    command = <<EOT
-echo all: > ./ansible/inventories/hosts.yml
-echo "  hosts:" >> ./ansible/inventories/hosts.yml
-echo "    vmapp:" >> ./ansible/inventories/hosts.yml
-echo "      ansible_host: deplinux-test.westeurope.cloudapp.azure.com" >> ./ansible/inventories/hosts.yml
-echo "      ansible_user: appuser99" >> ./ansible/inventories/hosts.yml
-echo "      ansible_password: Pa$w0rd1234!" >> ./ansible/inventories/hosts.yml
-EOT
+    connection {
+      type        = "ssh"
+      host        = local.vm_fqdn  # Or use local.vm_ip_address if necessary
+      user        = var.username_app
+      private_key = file("./ssh/id_ed25519")
+    }
   }
 
   depends_on = [null_resource.setup_ansible]
 }
 
-# Run Ansible playbook
-resource "null_resource" "run_playbook" {
-
+# Step to generate the inventory file
+# Step to generate or update the inventory file
+resource "null_resource" "generate_inventory" {
   provisioner "remote-exec" {
-
-    inline = ["ansible-playbook -i ./ansible/inventories/hosts.yml ./ansible/playbook.yml"]
-
-
+    inline = [
+      "cd /home/${var.username_app}/ansible/inventories",
+      "echo all: > hosts.yml",
+      "echo \"  hosts:\" >> hosts.yml",
+      "echo \"    slave1:\" >> hosts.yml",  # Correspond au nom utilisé dans le playbook
+      "echo \"      ansible_host: ${local.vm_fqdn}\" >> hosts.yml",
+      "echo \"      ansible_user: ${var.username_app}\" >> hosts.yml",
+      "echo \"      ansible_password: ${var.password_app}\" >> hosts.yml"
+    ]
 
     connection {
-    type        = "ssh"
-    host        = local.vm_fqdn  # Ou utilisez `local.vm_ip_address` si nécessaire
-    user        = var.username_app
-    private_key = file("./ssh/id_ed25519")
+      type        = "ssh"
+      host        = local.vm_fqdn  # Ou utilisez local.vm_ip_address si nécessaire
+      user        = var.username_app
+      private_key = file("./ssh/id_ed25519")
     }
+  }
 
+  depends_on = [null_resource.upload_ansible]
+}
+
+
+# # Generate Ansible inventory
+# resource "null_resource" "generate_inventory" {
+#   provisioner "local-exec" {
+#     command = <<EOT
+# echo all: > ./ansible/inventories/hosts.yml
+# echo "  hosts:" >> ./ansible/inventories/hosts.yml
+# echo "    vmapp:" >> ./ansible/inventories/hosts.yml
+# echo "      ansible_host: deplinux-test.westeurope.cloudapp.azure.com" >> ./ansible/inventories/hosts.yml
+# echo "      ansible_user: appuser99" >> ./ansible/inventories/hosts.yml
+# echo "      ansible_password: Pa$w0rd1234!" >> ./ansible/inventories/hosts.yml
+# EOT
+#   }
+
+#   depends_on = [null_resource.setup_ansible]
+# }
+
+
+
+
+
+resource "null_resource" "run_playbook" {
+  provisioner "remote-exec" {
+    inline = [
+      "ansible-playbook -i /home/${var.username_app}/ansible/inventories/hosts.yml /home/${var.username_app}/ansible/playbook.yml -vv > /tmp/playbook_output.txt 2>&1",
+      "cat /tmp/playbook_output.txt"
+    ]
+
+    connection {
+      type        = "ssh"
+      host        = local.vm_fqdn  # Ou utilisez local.vm_ip_address si nécessaire
+      user        = var.username_app
+      private_key = file("./ssh/id_ed25519")
     }
+  }
 
-  depends_on = [null_resource.setup_ansible, null_resource.generate_inventory]
+  triggers = {
+    playbook_result = uuid() # Générez un nouvel ID à chaque exécution pour forcer l'exécution
+  }
+
+  depends_on = [null_resource.generate_inventory]
+}
+
+resource "local_file" "playbook_output" {
+  content = <<EOT
+  ${null_resource.run_playbook.provisioner["remote-exec"][1]}
+  EOT
+  filename = "./playbook_output.txt"
 }

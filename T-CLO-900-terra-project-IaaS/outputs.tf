@@ -17,4 +17,6 @@ output "vm_fqdn" {
   value = azurerm_dev_test_linux_virtual_machine.vmapp.fqdn
 }
 
-  
+output "playbook_result" {
+  value = file("./playbook_output.txt")
+}
