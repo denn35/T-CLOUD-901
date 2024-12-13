@@ -1,13 +1,19 @@
+# Data source: Resource group
 data "azurerm_resource_group" "tclo" {
   name = var.resource_group_name
 }
 
+# Data source: DevTest Lab
 data "azurerm_dev_test_lab" "tclo" {
   name                = var.devtestlab_name
   resource_group_name = data.azurerm_resource_group.tclo.name
 }
 
+
+# Create VM
 resource "azurerm_dev_test_linux_virtual_machine" "vmapp" {
+
+
   name                   = "deplinux-test"
   lab_name               = data.azurerm_dev_test_lab.tclo.name
   resource_group_name    = data.azurerm_resource_group.tclo.name
@@ -32,27 +38,56 @@ resource "azurerm_dev_test_linux_virtual_machine" "vmapp" {
   tags = {
     environment = "development"
   }
-  
-    provisioner "local-exec" {
-    command = <<EOT
-    host_entry=${azurerm_dev_test_linux_virtual_machine.vmapp.fqdn}
+}
 
-    if [ -z "$host_entry" ]; then
-    echo "Error: FQDN is not available." >&2
-    exit 1
-    fi
+# Define locals for FQDN and IP address
+locals {
+  # Vérification conditionnelle pour FQDN
+  vm_fqdn = azurerm_dev_test_linux_virtual_machine.vmapp.fqdn
+}
 
-    cat <<EOF > ./ansible/inventories/hosts.yml
-    all:
-    hosts:
-        vmapp:
-        ansible_host: $host_entry
-        ansible_user: ${var.username_app}
-        ansible_password: ${var.password_app}
-    EOF
-    EOT
+# Install python & ansible 
+resource "null_resource" "setup_remote_env" {
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt update",
+      "sudo apt install -y python3 python3-pip",
+      "pip3 install ansible"
+    ]
+
+    connection {
+      type        = "ssh"
+      host        = local.vm_fqdn  # Ou utilisez `local.vm_ip_address` si nécessaire
+      user        = var.username_app
+      private_key = file("./ssh/id_ed25519")
     }
+  }
+
+  depends_on = [azurerm_dev_test_linux_virtual_machine.vmapp]
 
 }
 
+# Generate Ansible inventory
+resource "null_resource" "generate_inventory" {
+  provisioner "local-exec" {
+    command = <<EOT
+echo all: > ./ansible/inventories/hosts.yml
+echo "  hosts:" >> ./ansible/inventories/hosts.yml
+echo "    vmapp:" >> ./ansible/inventories/hosts.yml
+echo "      ansible_host: deplinux-test.westeurope.cloudapp.azure.com" >> ./ansible/inventories/hosts.yml
+echo "      ansible_user: appuser99" >> ./ansible/inventories/hosts.yml
+echo "      ansible_password: Pa$w0rd1234!" >> ./ansible/inventories/hosts.yml
+EOT
+  }
 
+  depends_on = [null_resource.setup_remote_env]
+}
+
+# Run Ansible playbook
+resource "null_resource" "run_playbook" {
+  provisioner "local-exec" {
+    command = "ansible-playbook -i ./ansible/inventories/hosts.yml ./ansible/playbook.yml"
+  }
+
+  depends_on = [null_resource.generate_inventory]
+}
