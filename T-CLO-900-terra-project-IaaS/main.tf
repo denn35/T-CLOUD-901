@@ -13,7 +13,6 @@ data "azurerm_dev_test_lab" "tclo" {
 # Create VM
 resource "azurerm_dev_test_linux_virtual_machine" "vmapp" {
 
-
   name                   = "deplinux-test"
   lab_name               = data.azurerm_dev_test_lab.tclo.name
   resource_group_name    = data.azurerm_resource_group.tclo.name
@@ -47,13 +46,20 @@ locals {
 }
 
 # Install python & ansible 
-resource "null_resource" "setup_remote_env" {
+resource "null_resource" "setup_ansible" {
   provisioner "remote-exec" {
     inline = [
+      "set -x",
+      "export DEBIAN_FRONTEND=noninteractive",
+      "echo dbus dbus/restart-services select polkit.service,walinuxagent.service | sudo debconf-set-selections",
+      "while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do echo 'Waiting for lock release...'; sleep 2; done",
       "sudo apt update",
+      "sudo apt upgrade -y",
       "sudo apt install -y python3 python3-pip",
-      "pip3 install ansible"
+      "sudo apt install -y ansible-core",
+      "sudo apt install -y ansible"
     ]
+
 
     connection {
       type        = "ssh"
@@ -80,14 +86,26 @@ echo "      ansible_password: Pa$w0rd1234!" >> ./ansible/inventories/hosts.yml
 EOT
   }
 
-  depends_on = [null_resource.setup_remote_env]
+  depends_on = [null_resource.setup_ansible]
 }
 
 # Run Ansible playbook
 resource "null_resource" "run_playbook" {
-  provisioner "local-exec" {
-    command = "ansible-playbook -i ./ansible/inventories/hosts.yml ./ansible/playbook.yml"
-  }
 
-  depends_on = [null_resource.generate_inventory]
+  provisioner "remote-exec" {
+
+    inline = ["ansible-playbook -i ./ansible/inventories/hosts.yml ./ansible/playbook.yml"]
+
+
+
+    connection {
+    type        = "ssh"
+    host        = local.vm_fqdn  # Ou utilisez `local.vm_ip_address` si nécessaire
+    user        = var.username_app
+    private_key = file("./ssh/id_ed25519")
+    }
+
+    }
+
+  depends_on = [null_resource.setup_ansible, null_resource.generate_inventory]
 }
