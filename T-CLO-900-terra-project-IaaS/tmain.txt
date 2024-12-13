@@ -7,6 +7,19 @@ data "azurerm_dev_test_lab" "tclo" {
   resource_group_name = data.azurerm_resource_group.tclo.name
 }
 
+
+resource "azurerm_public_ip" "vmapp_ip" {
+  name                = "vmapp-ip"
+  location            = var.location
+  resource_group_name = data.azurerm_resource_group.tclo.name
+  allocation_method   = "Dynamic"
+  domain_name_label   = "custom-vmapp" # Génère custom-vmapp.<region>.cloudapp.azure.com
+
+  tags = {
+    environment = "development"
+  }
+}
+
 resource "azurerm_dev_test_linux_virtual_machine" "vmapp" {
   name                   = "deplinux-test"
   lab_name               = data.azurerm_dev_test_lab.tclo.name
@@ -32,27 +45,31 @@ resource "azurerm_dev_test_linux_virtual_machine" "vmapp" {
   tags = {
     environment = "development"
   }
-  
-    provisioner "local-exec" {
+
+  depends_on = [azurerm_public_ip.vmapp_ip]
+
+
+  provisioner "local-exec" {
     command = <<EOT
-    host_entry=${azurerm_dev_test_linux_virtual_machine.vmapp.fqdn}
+  host_entry="${azurerm_public_ip.vmapp_ip.fqdn}"
 
-    if [ -z "$host_entry" ]; then
-    echo "Error: FQDN is not available." >&2
+  if [ -z "$host_entry" ]; then
+    echo "Error: FQDN not available." >&2
     exit 1
-    fi
+  fi
 
-    cat <<EOF > ./ansible/inventories/hosts.yml
-    all:
+  cat <<EOF > ./ansible/inventories/hosts.yml
+  all:
     hosts:
-        vmapp:
+      vmapp:
         ansible_host: $host_entry
         ansible_user: ${var.username_app}
         ansible_password: ${var.password_app}
-    EOF
-    EOT
-    }
-
+  EOF
+  EOT
+  }
+    # Exécuter le playbook Ansible
+  provisioner "local-exec" {
+    command = "ansible-playbook -i ./ansible/inventories/hosts.yml ./ansible/playbook.yml"
+  }
 }
-
-
