@@ -18,5 +18,6 @@ output "vm_fqdn" {
 }
 
 output "playbook_result" {
-  value = file("./playbook_output.txt")
+  value = chomp(file("./logs/playbook_output.txt"))
+  description = "The result of the Ansible playbook execution."
 }

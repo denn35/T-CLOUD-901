@@ -72,6 +72,29 @@ resource "null_resource" "setup_ansible" {
   depends_on = [azurerm_dev_test_linux_virtual_machine.vmapp]
 
 }
+
+# Step to add SSH public key to the remote VM
+resource "null_resource" "add_ssh_key" {
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir -p ~/.ssh",
+      "echo '${file("./ssh/id_ed25519.pub")}' >> ~/.ssh/authorized_keys",
+      "chmod 700 ~/.ssh",
+      "chmod 600 ~/.ssh/authorized_keys"
+    ]
+
+    connection {
+      type        = "ssh"
+      host        = local.vm_fqdn  # Ou utilisez `local.vm_ip_address` si nécessaire
+      user        = var.username_app
+      private_key = file("./ssh/id_ed25519")
+    }
+  }
+
+  depends_on = [azurerm_dev_test_linux_virtual_machine.vmapp]
+}
+
+
 # Step to upload the ansible directory to the remote machine
 resource "null_resource" "upload_ansible" {
   provisioner "file" {
@@ -130,16 +153,10 @@ resource "null_resource" "generate_inventory" {
 
 #   depends_on = [null_resource.setup_ansible]
 # }
-
-
-
-
-
 resource "null_resource" "run_playbook" {
   provisioner "remote-exec" {
     inline = [
-      "ansible-playbook -i /home/${var.username_app}/ansible/inventories/hosts.yml /home/${var.username_app}/ansible/playbook.yml -vv > /tmp/playbook_output.txt 2>&1",
-      "cat /tmp/playbook_output.txt"
+      "ansible-playbook -i /home/${var.username_app}/ansible/inventories/hosts.yml /home/${var.username_app}/ansible/playbook.yml -vv > /home/${var.username_app}/ansible/logs/playbook_output.txt 2>&1",
     ]
 
     connection {
@@ -150,16 +167,28 @@ resource "null_resource" "run_playbook" {
     }
   }
 
-  triggers = {
-    playbook_result = uuid() # Générez un nouvel ID à chaque exécution pour forcer l'exécution
+}
+
+resource "null_resource" "fetch_logs" {
+  provisioner "remote-exec" {
+    inline = [
+      "scp -o StrictHostKeyChecking=no /home/${var.username_app}/ansible/logs/playbook_output.txt ${var.username_app}@${local.vm_fqdn}:./logs/playbook_output.txt"
+    ]
+
+    connection {
+      type        = "ssh"
+      host        = local.vm_fqdn
+      user        = var.username_app
+      private_key = file("./ssh/id_ed25519")
+    }
   }
 
-  depends_on = [null_resource.generate_inventory]
+  depends_on = [null_resource.run_playbook]
 }
 
 resource "local_file" "playbook_output" {
-  content = <<EOT
-  ${null_resource.run_playbook.provisioner["remote-exec"][1]}
-  EOT
-  filename = "./playbook_output.txt"
+  content = file("./logs/playbook_output.txt")
+  filename = "./logs/playbook_output.txt"
+
+  depends_on = [null_resource.fetch_logs]
 }
