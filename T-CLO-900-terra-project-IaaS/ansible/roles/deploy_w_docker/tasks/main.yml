@@ -43,7 +43,6 @@
     - /var/www/sample-app/storage
     - /var/www/sample-app/bootstrap/cache
 
-
 - name: Check for running Docker containers
   shell: docker ps -q
   register: running_containers
@@ -68,6 +67,15 @@
   command: docker-compose up -d
   args:
     chdir: /var/www/sample-app
+
+# Attendre que la base de données soit prête
+- name: Wait for database service to be ready
+  command: docker exec sample-app_app_1 sh -c 'mysqladmin ping -h"db" --silent'
+  register: db_ready
+  retries: 30
+  delay: 5
+  until: db_ready.rc == 0
+  become: true
 
 # Vérifier si les migrations existent
 - name: Vérifier si des migrations existent
