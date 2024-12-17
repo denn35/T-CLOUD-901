@@ -17,7 +17,7 @@ output "vm_fqdn" {
   value = azurerm_dev_test_linux_virtual_machine.vmapp.fqdn
 }
 
-output "playbook_result" {
-  value = chomp(file("./logs/playbook_output.txt"))
-  description = "The result of the Ansible playbook execution."
-}
+# output "playbook_result" {
+#   value = chomp(file("./logs/playbook_output.txt"))
+#   description = "The result of the Ansible playbook execution."
+# }
