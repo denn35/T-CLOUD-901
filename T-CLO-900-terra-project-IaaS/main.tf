@@ -41,12 +41,31 @@ resource "azurerm_dev_test_linux_virtual_machine" "vmapp" {
 resource "null_resource" "setup_ansible" {
   provisioner "remote-exec" {
     inline = [
-      # Installation et vérification (décommenter les parties nécessaires)
-      # "export DEBIAN_FRONTEND=noninteractive",
-      # "sudo apt-get update -y && sudo apt-get upgrade -y",
-      # "sudo apt-get install -y python3 python3-pip sshpass",
-      # "pip3 install --upgrade pip",
-      # "pip3 install --user ansible",
+    # Activer le mode strict et exporter la variable pour un mode non-interactif
+      "set -eux",
+      "export DEBIAN_FRONTEND=noninteractive",
+      "echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections",
+ 
+      # Attendre la libération du verrou dpkg s'il y en a un
+      "while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do echo 'Waiting for dpkg lock release...'; sleep 2; done",
+ 
+      # Installer needrestart et configurer le redémarrage automatique silencieux
+      "sudo apt-get update -y",
+      "sudo apt-get install -y needrestart",
+      "sudo sed -i 's/^#\\$nrconf{restart} = .*/\\$nrconf{restart} = \"a\";/' /etc/needrestart/needrestart.conf",
+ 
+      # Configuration temporaire pour apt pour éviter les redémarrages interactifs
+      "sudo mkdir -p /etc/apt/apt.conf.d",
+      "echo 'DPkg::Options { \"--force-confdef\"; \"--force-confold\"; }' | sudo tee /etc/apt/apt.conf.d/local",
+ 
+      # Mise à jour et installation silencieuse des paquets nécessaires
+      "sudo apt-get upgrade -y",
+      "sudo apt-get install -y python3 python3-pip sshpass",
+ 
+      # Installation d'Ansible via pip3
+      "pip3 install --upgrade pip",
+      "pip3 install --user ansible",
+     
       "python3 --version",
       "pip3 --version",
       "~/.local/bin/ansible --version"

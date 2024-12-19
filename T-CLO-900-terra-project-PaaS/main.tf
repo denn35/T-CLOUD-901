@@ -40,7 +40,7 @@ resource "azurerm_linux_web_app" "webapp" {
   site_config { 
     minimum_tls_version = "1.2"
     application_stack {
-      php_version = "8.1" # Change to appropiate application and version
+      php_version = "8.2" # Change to appropiate application and version
     }
   }
 }

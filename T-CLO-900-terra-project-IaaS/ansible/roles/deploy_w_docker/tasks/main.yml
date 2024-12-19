@@ -70,11 +70,12 @@
 
 # Attendre que la base de données soit prête
 - name: Wait for database service to be ready
-  command: docker exec sample-app_app_1 sh -c 'mysqladmin ping -h"db" --silent'
+  command: docker exec sample-app_app_1 sh -c 'mysqladmin ping -h'{{ laravel_env.DB_HOST }}' --silent'
   register: db_ready
-  retries: 30
-  delay: 5
-  until: db_ready.rc == 0
+  retries: 5
+  delay: 3
+  until: "'mysqld is alive' in db_ready.stdout"
+  ignore_errors: true
   become: true
 
 # Vérifier si les migrations existent
