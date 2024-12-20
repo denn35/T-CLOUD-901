@@ -71,11 +71,11 @@ resource "azurerm_app_service_source_control" "sourcecontrol" {
   use_mercurial      = false
 }
 
-#resource "azurerm_source_control_token" "source_control_token" {
-#  type         = "GitHub"
-#  token        = var.github_auth_token
-#  token_secret = var.github_auth_token
-#}
+resource "azurerm_source_control_token" "source_control_token" {
+  type         = "GitHub"
+  token        = var.github_auth_token
+  token_secret = var.github_auth_token
+}
 
 resource "azurerm_mysql_server" "terracloud_mysql" {
   name                = "terracloud-mysqlserver"
