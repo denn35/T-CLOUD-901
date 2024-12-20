@@ -14,7 +14,7 @@ variable "app_registration_name" {
 }
 
 variable "source_control_repo_url" {
-  default = "https://github.com/Azure-Samples/nodejs-docs-hello-world"
+  default = "https://github.com/denn35/T-CLOUD-901.git"
   type        = string
 }
 
@@ -31,6 +31,11 @@ variable "lab_subnet_name" {
 variable "lab_virtual_network_id" {
   default = "/subscriptions/1eb5e572-df10-47a3-977e-b0ec272641e4/resourcegroups/t-clo-901-rns-0/providers/microsoft.devtestlab/labs/t-clo-901-rns-0/virtualnetworks/t-clo-901-rns-0"
   type        = string
+}
+
+variable "github_auth_token" {
+  type        = string
+  description = "Github Auth Token from Github > Developer Settings > Personal Access Tokens > Tokens Classic (needs to have repo permission)"
 }
 
 
