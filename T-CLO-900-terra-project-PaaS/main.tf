@@ -52,6 +52,7 @@ resource "azurerm_linux_web_app" "webapp" {
       DB_DATABASE="laravel",
       DB_USERNAME="root",
       DB_PASSWORD="root",
+      
       MYSQL_ATTR_SSL_CA="/home/site/wwwroot/ssl/DigiCertGlobalRootCA.crt.pem",
       LOG_CHANNEL="stderr",
       APP_DEBUG=true,
@@ -71,13 +72,13 @@ resource "azurerm_app_service_source_control" "sourcecontrol" {
   use_mercurial      = false
 }
 
-#resource "azurerm_source_control_token" "source_control_token" {
-#  type         = "GitHub"
-#  token        = var.github_auth_token
-#  token_secret = var.github_auth_token
-#}
+resource "azurerm_source_control_token" "source_control_token" {
+  type         = "GitHub"
+  token        = var.github_auth_token
+  token_secret = var.github_auth_token
+}
 
-resource "azurerm_mysql_server" "terracloud_mysql" {
+resource "azurerm_mysql_flexible_server" "terracloud_mysql" {
   name                = "terracloud-mysqlserver"
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -101,11 +102,11 @@ resource "azurerm_mysql_server" "terracloud_mysql" {
 resource "azurerm_mysql_database" "terracloud_database" {
   name                = "terracloud-database"
   resource_group_name = var.resource_group_name
-  server_name         = azurerm_mysql_server.terracloud_mysql.name
+  server_name         = azurerm_mysql_flexible_server.terracloud_mysql.name
   charset             = "utf8"
   collation           = "utf8_unicode_ci"
 }
 
-output "app_url" {
-   value = azurerm_linux_web_app.webappcontapp.default_hostname
-}
+#output "app_url" {
+#   value = azurerm_linux_web_app.webappcontapp.default_hostname
+#}
