@@ -50,8 +50,8 @@ resource "azurerm_linux_web_app" "webapp" {
       DB_HOST="terracloud-mysqlserver.mysql.database.azure.com",
       DB_PORT=3306,
       DB_DATABASE="laravel",
-      DB_USERNAME="root",
-      DB_PASSWORD="root",
+      DB_USERNAME="psqladmin",
+      DB_PASSWORD="H@Sh1CoR3!",
       
       MYSQL_ATTR_SSL_CA="/home/site/wwwroot/ssl/DigiCertGlobalRootCA.crt.pem",
       LOG_CHANNEL="stderr",
@@ -83,24 +83,24 @@ resource "azurerm_mysql_flexible_server" "terracloud_mysql" {
   location            = var.location
   resource_group_name = var.resource_group_name
 
-  administrator_login          = "root"
-  administrator_login_password = "root"
+  administrator_login    = "psqladmin"
+  administrator_password = "H@Sh1CoR3!"
 
-  sku_name   = "B_Gen5_2"
-  version    = "8.0"
+  sku_name   = "B_Standard_B2s"
+  version    = "8.0.21"
 
 
-  auto_grow_enabled                 = true
+  #auto_grow_enabled                 = true
   backup_retention_days             = 7
   geo_redundant_backup_enabled      = true
   # infrastructure_encryption_enabled = true
-  public_network_access_enabled     = false
-  ssl_enforcement_enabled           = true
-  ssl_minimal_tls_version_enforced  = "TLS1_2"
+  #public_network_access_enabled     = false
+  #ssl_enforcement_enabled           = true
+  #ssl_minimal_tls_version_enforced  = "TLS1_2"
 }
 
 resource "azurerm_mysql_database" "terracloud_database" {
-  name                = "terracloud-database"
+  name                = "laravel"
   resource_group_name = var.resource_group_name
   server_name         = azurerm_mysql_flexible_server.terracloud_mysql.name
   charset             = "utf8"
