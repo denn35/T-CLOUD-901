@@ -13,7 +13,6 @@ data "azuread_application" "appregistration" {
 #  resource_group_name = var.resource_group_name
 #}
 
-
 # Generate a random integer to create a globally unique name
 resource "random_integer" "ri" {
   min = 10000
@@ -52,6 +51,8 @@ resource "azurerm_linux_web_app" "webapp" {
       DB_DATABASE="laravel",
       DB_USERNAME="psqladmin",
       DB_PASSWORD="H@Sh1CoR3!",
+      DOCUMENT_ROOT= "/home/site/wwwroot/public",
+      PHP_INI_SCAN_DIR= "/usr/local/etc/php/conf.d:/home/site/ini",
       
       MYSQL_ATTR_SSL_CA="/home/site/wwwroot/ssl/DigiCertGlobalRootCA.crt.pem",
       LOG_CHANNEL="stderr",
@@ -68,8 +69,12 @@ resource "azurerm_app_service_source_control" "sourcecontrol" {
   app_id             = azurerm_linux_web_app.webapp.id
   repo_url           = var.source_control_repo_url
   branch             = "main"
-  use_manual_integration = false
-  use_mercurial      = false
+  #use_manual_integration = false
+  #use_mercurial      = false
+  depends_on = [
+    azurerm_linux_web_app.webapp,
+    azurerm_source_control_token.source_control_token
+  ]
 }
 
 resource "azurerm_source_control_token" "source_control_token" {
@@ -82,24 +87,21 @@ resource "azurerm_mysql_flexible_server" "terracloud_mysql" {
   name                = "terracloud-mysqlserver"
   location            = var.location
   resource_group_name = var.resource_group_name
-
   administrator_login    = "psqladmin"
   administrator_password = "H@Sh1CoR3!"
-
   sku_name   = "B_Standard_B2s"
   version    = "8.0.21"
 
-
   #auto_grow_enabled                 = true
-  backup_retention_days             = 7
-  geo_redundant_backup_enabled      = true
+  #backup_retention_days             = 7
+  #geo_redundant_backup_enabled      = true
   # infrastructure_encryption_enabled = true
   #public_network_access_enabled     = false
   #ssl_enforcement_enabled           = true
   #ssl_minimal_tls_version_enforced  = "TLS1_2"
-}
+} 
 
-resource "azurerm_mysql_database" "terracloud_database" {
+resource "azurerm_mysql_flexible_database" "terracloud_database" {
   name                = "laravel"
   resource_group_name = var.resource_group_name
   server_name         = azurerm_mysql_flexible_server.terracloud_mysql.name

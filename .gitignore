@@ -7,6 +7,7 @@
 *.tfstate.backup
 *planfile
 *plantf
+*planPaaS
 
 # Exclure les fichiers spécifiques dans les sous-dossiers
 T-CLO-900-terra-project-IaaS/.terraform/

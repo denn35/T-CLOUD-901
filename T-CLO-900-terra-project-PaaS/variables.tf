@@ -13,10 +13,7 @@ variable "app_registration_name" {
   type        = string
 }
 
-variable "source_control_repo_url" {
-  default = "https://github.com/denn35/T-CLOUD-901.git"
-  type        = string
-}
+
 
 variable "devtestlab_name" {
   default = "t-clo-901-rns-0"
@@ -30,6 +27,12 @@ variable "lab_subnet_name" {
 
 variable "lab_virtual_network_id" {
   default = "/subscriptions/1eb5e572-df10-47a3-977e-b0ec272641e4/resourcegroups/t-clo-901-rns-0/providers/microsoft.devtestlab/labs/t-clo-901-rns-0/virtualnetworks/t-clo-901-rns-0"
+  type        = string
+}
+
+
+variable "source_control_repo_url" {
+  default = "https://github.com/denn35/T-CLOUD-901.git"
   type        = string
 }
 
