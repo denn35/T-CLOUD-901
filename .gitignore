@@ -18,7 +18,8 @@ T-CLO-900-terra-project-PaaS/variables.tf
 T-CLO-900-terra-project-IaaS/variables.tf
 T-CLO-900-terra-project-IaaS/ssh/*
 T-CLO-900-terra-project-IaaS/.terraform.*
-T-CLO-900-terra-project-IaaS\infrasetup.sh
+T-CLO-900-terra-project-IaaS/infrasetup.*
+
 
 # Règles provenant de sample-app
 /node_modules

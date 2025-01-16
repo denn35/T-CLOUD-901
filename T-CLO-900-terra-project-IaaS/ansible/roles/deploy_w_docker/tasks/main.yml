@@ -15,7 +15,7 @@
     mode: '0755'
     recurse: true
 
-- name: Mark /var/www/sample-app as a safe Git repository
+- name: Rends /var/www/sample-app comme 'safe' Git repository
   command: git config --global --add safe.directory /var/www/sample-app
   become: true
 
@@ -27,14 +27,14 @@
     force: yes
   become: true
 
-- name: Ensure proper ownership for sample-app
+- name: Accorde les droits necessaire pour sample-app
   file:
     path: /var/www/sample-app
     owner: www-data
     group: www-data
     recurse: true
 
-- name: Ensure storage and cache directories are writable
+- name: Accorde les droits necessaires sur les fichiers
   file:
     path: "{{ item }}"
     mode: '0775'
@@ -43,22 +43,22 @@
     - /var/www/sample-app/storage
     - /var/www/sample-app/bootstrap/cache
 
-- name: Check for running Docker containers
+- name: Check s'il y a des conteneurs en cours
   shell: docker ps -q
   register: running_containers
   changed_when: false
 
-- name: Stop all running Docker containers
+- name: Stop tous les conteneurs en cours
   shell: docker stop $(docker ps -q)
   when: running_containers.stdout != ""
   ignore_errors: true
 
-- name: Check for all Docker containers
+- name: Check les conteneurs en cours
   shell: docker ps -aq
   register: all_containers
   changed_when: false
 
-- name: Remove all Docker containers
+- name: Supprime tous les conteneurs
   shell: docker rm $(docker ps -aq)
   when: all_containers.stdout != ""
   ignore_errors: true
@@ -69,7 +69,7 @@
     chdir: /var/www/sample-app
 
 # Attendre que la base de données soit prête
-- name: Wait for database service to be ready
+- name: Patiente le temps que le service de la base de donnée soit prêt
   command: docker exec sample-app_app_1 sh -c 'mysqladmin ping -h'{{ laravel_env.DB_HOST }}' --silent'
   register: db_ready
   retries: 5
