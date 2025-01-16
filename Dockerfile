@@ -1,5 +1,5 @@
 # Utilisez une image Docker officielle pour PHP 8.1 avec Apache
-FROM php:8.1-apache
+FROM webdevops/php-nginx:8.2-alpine
 
 # Installez les extensions PHP nécessaires
 RUN docker-php-ext-install pdo_mysql
