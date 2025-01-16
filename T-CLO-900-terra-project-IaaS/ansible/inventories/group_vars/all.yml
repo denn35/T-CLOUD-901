@@ -3,8 +3,7 @@ laravel_repo: "https://gitlab.infra.connectwork.fr/epitech/sample-app.git"
 laravel_path: "/var/www/html"
 laravel_env:
   DB_CONNECTION: mysql
-  # sql : stwo
-  DB_HOST: 172.20.10.3
+  DB_HOST: db
   DB_PORT: 3306
   DB_DATABASE: db_name
   DB_USERNAME: username

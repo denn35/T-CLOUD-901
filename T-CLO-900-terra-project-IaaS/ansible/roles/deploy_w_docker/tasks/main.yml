@@ -68,15 +68,12 @@
   args:
     chdir: /var/www/sample-app
 
-# Attendre que la base de données soit prête
-- name: Patiente le temps que le service de la base de donnée soit prêt
-  command: docker exec sample-app_app_1 sh -c 'mysqladmin ping -h'{{ laravel_env.DB_HOST }}' --silent'
-  register: db_ready
-  retries: 5
-  delay: 3
-  until: "'mysqld is alive' in db_ready.stdout"
-  ignore_errors: true
+
+- name: Patiente pendant 20 secondes
+  ansible.builtin.pause:
+    seconds: 20
   become: true
+
 
 # Vérifier si les migrations existent
 - name: Vérifier si des migrations existent
