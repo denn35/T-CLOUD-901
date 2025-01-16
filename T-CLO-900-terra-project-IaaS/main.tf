@@ -66,9 +66,9 @@ resource "null_resource" "setup_ansible" {
       "pip3 install --upgrade pip",
       "pip3 install --user ansible",
      
-      "python3 --version",
-      "pip3 --version",
-      "~/.local/bin/ansible --version"
+      # "python3 --version",
+      # "pip3 --version",
+      # "~/.local/bin/ansible --version"
     ]
 
     connection {
@@ -98,6 +98,7 @@ resource "null_resource" "upload_ansible" {
 
   depends_on = [null_resource.setup_ansible]
 }
+
 # Upload SSH key (private)
 resource "null_resource" "upload_ssh_key" {
   provisioner "file" {
