@@ -18,6 +18,7 @@ T-CLO-900-terra-project-PaaS/variables.tf
 T-CLO-900-terra-project-IaaS/variables.tf
 T-CLO-900-terra-project-IaaS/ssh/*
 T-CLO-900-terra-project-IaaS/.terraform.*
+T-CLO-900-terra-project-IaaS/ansible/inventories/group_vars/all.yml
 T-CLO-900-terra-project-IaaS/infrasetup.*
 
 
